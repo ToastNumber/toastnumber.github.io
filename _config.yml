@@ -1,0 +1,23 @@
+# Site settings
+title: Kelsey McKenna
+header-img: img/home-bg.jpg
+email: KelseyJMcKenna@gmail.com
+description: "My blog for articles related to mathematics, computer science, and poker."
+baseurl: ''
+url: "http://toastnumber.github.io"
+github_username:  ToastNumber
+email_username: KelseyJMcKenna@gmail.com
+linkedin_username: KelseyMcKenna
+brandedme_username: kelseymckenna
+# facebook_username: Kelsparov
+# twitter_username: Kelsparov
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+paginate: 5
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
+excerpt_separator: ""
+
+gems: [jekyll-paginate, jekyll-feed]
