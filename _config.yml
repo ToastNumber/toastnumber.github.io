@@ -1,0 +1,32 @@
+title: Kelsey McKenna
+tagline: Blog about software and stuff
+description: >- # this means to ignore newlines until "baseurl:"
+  Hi! I'm Kelsey. This is my blog and site for posts about computer science, software engineering, mathematics and more.
+baseurl: ""
+url: "https://kelseymckenna.com"
+twitter_username: ToastNumber
+github_username: ToastNumber
+linkedin_username: KelseyMcKenna
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+theme: minima
+paginate: 5
+show_excerpts: true
+excerpt_separator: "<!--more-->"
+
+plugins:
+  - jekyll-feed
+  - jekyll-paginate
+
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+

