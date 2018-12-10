@@ -3,8 +3,7 @@ layout: page
 title: "About"
 ---
 
-## CV
-You can download my CV [here](../resources/CV-Kelsey-McKenna.pdf), or see a more detailed history on my [LinkedIn](https://www.linkedin.com/in/kelseymckenna/).
+Please see my [LinkedIn](https://www.linkedin.com/in/kelseymckenna/).
 
 ***
 
