@@ -5,7 +5,7 @@ permalink: /log4shell/
 tags: java jndi ldap security log4shell log4j
 ---
 
-A demonstration of how the "log4shell" remote code execution vulnerability in log4j.
+A demonstration of how the "log4shell" remote code execution vulnerability in log4j works.
 
 <!--more-->
 
