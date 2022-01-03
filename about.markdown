@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-Find my contact links in the footer of the page.
+Please find my contact links in the footer of the page.
 
 ## Other links
 - [Soundcloud](https://soundcloud.com/kelseymckennamusic)

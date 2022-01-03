@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Kelsey McKenna | Blog about software and stuff",
+  "short_name": "Kelsey McKenna",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "This is my blog and site for posts about computer science, software engineering, mathematics and more.",
+  "icons": [{
+    "src": "favicon.svg",
+    "sizes": "any",
+    "type": "image/svg+xml"
+  }]
+}
+

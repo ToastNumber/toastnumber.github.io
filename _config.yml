@@ -1,7 +1,7 @@
 title: Kelsey McKenna
 tagline: Blog about software and stuff
-description: >- # this means to ignore newlines until "baseurl:"
-  Hi! I'm Kelsey. This is my blog and site for posts about computer science, software engineering, mathematics and more.
+description: >-
+  This is my blog and site for posts about computer science, software engineering, mathematics and more.
 baseurl: ""
 url: "https://kelseymckenna.com"
 twitter_username: ToastNumber
