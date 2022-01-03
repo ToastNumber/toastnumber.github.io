@@ -1,5 +1,6 @@
-ideas.md
-_site/*
-.idea
-resources/Research-and-Typesetting/
-*.swp
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+vendor/
+.bundle/
