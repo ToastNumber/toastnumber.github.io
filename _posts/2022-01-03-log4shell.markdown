@@ -88,5 +88,5 @@ In order to **modify** the database we have an admin user with the distinguished
 ## Notes
 
 * Fun fact: AWS EC2 instances have a process running that automatically patches vulnerable applications! If you run `ps -ef | grep log4j-cve` you'll see `/usr/bin/log4j-cve-2021-44228-hotpatch` is running. This means JNDI lookups will print `Patched JndiLookup::lookup()` instead. Read more here: https://aws.amazon.com/blogs/opensource/hotpatch-for-apache-log4j/
-    * The [`ldap/`](https://github.com/ToastNumber/log4shell/tree/master/ldap) folder has some helper scripts for querying slapd (the LDAP directory server)
+* The [`ldap/`](https://github.com/ToastNumber/log4shell/tree/master/ldap) folder has some helper scripts for querying slapd (the LDAP directory server)
 
