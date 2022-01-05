@@ -20,6 +20,17 @@ excerpt_separator: "<!--more-->"
 plugins:
   - jekyll-feed
   - jekyll-paginate
+  - jekyll-sitemap
+
+defaults:
+  - scope:
+      path: "./google*.html"
+    values:
+      sitemap: false
+  - scope:
+      path: "./resources/**"
+    values:
+      sitemap: false
 
 exclude:
   - .sass-cache/
