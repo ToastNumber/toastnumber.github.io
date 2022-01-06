@@ -35,12 +35,12 @@ My [log4shell](https://github.com/ToastNumber/log4shell) repo contains code to d
 
 ## How to run
 
-1. Install the prerequisites. Adjust the command for your OS.
+1. Either build an image from the Dockerfile, e.g. `docker build . -t local/log4shell` then run it, e.g `docker run -it local/log4shell sh` OR run the following (adjust the command for your OS):
     ```
     sudo yum install gcc java-1.8.0-openjdk-devel maven -y
+    make customize-config
     ```
-2. Run `make customize-config` OR build an image from the Dockerfile, e.g. `docker build . -t local/log4shell` then run it, e.g `docker run -it local/log4shell sh`.
-3. Run
+2. Run
     ```
     make start-slapd
     make add-log4shell-entry
