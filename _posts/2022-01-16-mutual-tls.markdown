@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Mutual TLS"
-permalink: /mutual-tls/
+permalink: /mutual-tls.html
 tags: java openssl tls security keystore
 ---
 

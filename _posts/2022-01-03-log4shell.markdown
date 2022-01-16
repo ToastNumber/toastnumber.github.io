@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Log4Shell"
-permalink: /log4shell/
+permalink: /log4shell.html
 tags: java jndi ldap security log4shell log4j
 ---
 
