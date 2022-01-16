@@ -9,7 +9,7 @@ A demonstration of how to setup mutual TLS for a simple Java server.
 
 <!--more-->
 
-See my [mTLS](https://github.com/ToastNumber/mTLS) repo for scirpts and source code.
+See my [mTLS](https://github.com/ToastNumber/mTLS) repo for scripts and source code.
 
 In mutual TLS, the TLS handshake includes a "Request CERT" message from the server to the client, which asks the client to send _its_ certificate for authentication so each side of the connection can verify the identity of the other (usually only the client can verify the server's identity).
 
